@@ -1,0 +1,12 @@
+{
+    "ModTitle": "Thief Overhaul",
+    "ModVersion": "0.2",
+    "ModAuthor": "Ralzar",
+    "ContactInfo": "forums.dfworkshop.com",
+    "DFUnity_Version": "0.11.3",
+    "ModDescription": "Rebalances and improves mechanics for thief skills.",
+    "GUID": "8263c411-5630-4f5c-a73e-4df5fa46cdbb",
+    "Files": [
+        "Assets/Game/Mods/ThiefOverhaul/ThiefOverhaul.cs"
+    ]
+}

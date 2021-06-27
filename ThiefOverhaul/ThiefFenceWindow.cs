@@ -84,7 +84,7 @@ namespace ThiefOverhaul
             guildManager = GameManager.Instance.GuildManager;
 
             serviceNPC = npc;
-            npcService = (GuildNpcServices)npc.Data.factionID;
+            npcService = GuildNpcServices.TG_SellMagicItems;
             this.guildGroup = guildGroup;
             guild = guildManager.GetGuild(guildGroup, buildingFactionId);
             Debug.Log("guild = " + guild.ToString());
@@ -209,21 +209,12 @@ namespace ThiefOverhaul
 
             for (int i = 0; i <= numOfItems; i++)
             {
-                DaggerfallUnityItem magicItem;
-                if (Dice100.FailedRoll(25))
-                {
-                    // Empty soul trap
-                    magicItem = ItemBuilder.CreateItem(ItemGroups.MiscItems, (int)MiscItems.Soul_trap);
-                    magicItem.value = 5000;
-                    magicItem.TrappedSoulType = MobileTypes.None;
-                }
-                else
-                {
-                    // Filled soul trap
-                    magicItem = ItemBuilder.CreateRandomlyFilledSoulTrap();
-                }
-                items.AddItem(magicItem);
+                DaggerfallUnityItem thiefItem;
+
+                thiefItem = ItemBuilder.CreateItem(ItemGroups.Jewellery, ThiefOverhaul.templateIndex_LockPicks);
+                items.AddItem(thiefItem);
             }
+            Debug.Log("GetThiefItems finished.");
             return items;
         }
 

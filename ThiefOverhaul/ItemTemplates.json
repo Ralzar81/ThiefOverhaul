@@ -1,0 +1,22 @@
+[
+    {
+        "index": 541,
+        "name": "Lockpicks",
+        "baseWeight": 2,
+        "hitPoints": 40,
+        "capacityOrTarget": 0,
+        "basePrice": 200,
+        "enchantmentPoints": 0,
+        "rarity": 10,
+        "variants": 0,
+        "drawOrderOrEffect": 0,
+        "isBluntWeapon": false,
+        "isLiquid": false,
+        "isOneHanded": false,
+        "isIngredient": false,
+        "worldTextureArchive": 541,
+        "worldTextureRecord": 0,
+        "playerTextureArchive": 0,
+        "playerTextureRecord": 0
+    }
+]

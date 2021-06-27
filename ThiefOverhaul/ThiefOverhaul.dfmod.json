@@ -10,6 +10,8 @@
         "Assets/Game/Mods/ThiefOverhaul/ThiefOverhaul.cs",
         "Assets/Game/Mods/ThiefOverhaul/ThiefFenceWindow.cs",
         "Assets/Game/Mods/ThiefOverhaul/Textures/ralzarfencegrey.png",
-        "Assets/Game/Mods/ThiefOverhaul/Textures/ralzarfencegold.png"
+        "Assets/Game/Mods/ThiefOverhaul/Textures/ralzarfencegold.png",
+        "Assets/Game/Mods/ThiefOverhaul/ItemTemplates.json",
+        "Assets/Game/Mods/ThiefOverhaul/Textures/541_0-0.png"
     ]
 }

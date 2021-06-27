@@ -29,6 +29,8 @@ namespace ThiefOverhaul
         FenceWindow fenceWindow;
         internal FenceWindow GetFenceWindow() { return fenceWindow; }
 
+        public const int templateIndex_LockPicks = 541;
+
         static DaggerfallUnity dfUnity = DaggerfallUnity.Instance;
         static PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
         static PlayerEnterExit playerEnterExit = GameManager.Instance.PlayerEnterExit;
@@ -50,6 +52,10 @@ namespace ThiefOverhaul
             PlayerActivate.RegisterCustomActivation(mod, 186, 26, ShadowAppraiserClicked);
             PlayerActivate.RegisterCustomActivation(mod, 182, 35, ShadowAppraiserClicked);
             UIWindowFactory.RegisterCustomUIWindow(UIWindowType.Tavern, typeof(FenceWindow));
+
+            ItemHelper itemHelper = DaggerfallUnity.Instance.ItemHelper;
+
+            itemHelper.RegisterCustomItem(templateIndex_LockPicks, ItemGroups.Jewellery, typeof(ItemLockpicks));
         }
 
         void Awake()

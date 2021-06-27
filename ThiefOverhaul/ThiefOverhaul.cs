@@ -16,6 +16,9 @@ using System;
 using DaggerfallWorkshop.Game.Utility;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
 using DaggerfallWorkshop.Game.Formulas;
+using DaggerfallWorkshop.Game.UserInterface;
+using DaggerfallWorkshop.Game.Questing;
+using DaggerfallWorkshop.Game.Guilds;
 
 namespace ThiefOverhaul
 {
@@ -23,11 +26,14 @@ namespace ThiefOverhaul
     {
         static Mod mod;
         static ThiefOverhaul instance;
+        FenceWindow fenceWindow;
+        internal FenceWindow GetFenceWindow() { return fenceWindow; }
 
         static DaggerfallUnity dfUnity = DaggerfallUnity.Instance;
         static PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
         static PlayerEnterExit playerEnterExit = GameManager.Instance.PlayerEnterExit;
         static int burglaryCounter = 0;
+        static StaticNPC npc = QuestMachine.Instance.LastNPCClicked;
 
         [Invoke(StateManager.StateTypes.Start, 0)]
         public static void Init(InitParams initParams)
@@ -39,12 +45,20 @@ namespace ThiefOverhaul
 
             EntityEffectBroker.OnNewMagicRound += ThiefEffects_OnNewMagicRound;
             PlayerEnterExit.OnTransitionExterior += SneakCounter_OnTransitionExterior;
-
+            PlayerActivate.RegisterCustomActivation(mod, 182, 25, ShadowAppraiserClicked);
+            PlayerActivate.RegisterCustomActivation(mod, 182, 35, ShadowAppraiserClicked);
+            PlayerActivate.RegisterCustomActivation(mod, 186, 26, ShadowAppraiserClicked);
+            PlayerActivate.RegisterCustomActivation(mod, 182, 35, ShadowAppraiserClicked);
+            UIWindowFactory.RegisterCustomUIWindow(UIWindowType.Tavern, typeof(FenceWindow));
         }
 
         void Awake()
         {
             mod.IsReady = true;
+
+            fenceWindow = new FenceWindow(DaggerfallUI.UIManager, npc, GameManager.Instance.GuildManager.GetGuildGroup(805));
+
+
             Debug.Log("[ThiefOverhaul] Mod is ready.");
         }
 
@@ -138,6 +152,29 @@ namespace ThiefOverhaul
                 Halt();
             }
         }
+
+        public static void ShadowAppraiserClicked(RaycastHit hit)
+        {
+            
+            FactionFile.FactionData factionData;
+            FactionFile.GuildGroups guildGroup;
+            npc = QuestMachine.Instance.LastNPCClicked;
+            GuildServices service = Services.GetService((GuildNpcServices)npc.Data.factionID);
+            if (QuestMachine.Instance.HasFactionListener(npc.Data.factionID))
+                return;
+            if (GameManager.Instance.PlayerEntity.FactionData.GetFactionData(npc.Data.factionID, out factionData))
+            {
+                if (Services.HasGuildService(npc.Data.factionID) && npc.Data.factionID == 805)
+                {
+                    (DaggerfallUI.Instance.UserInterfaceManager.TopWindow as DaggerfallGuildServicePopupWindow).CloseWindow();
+                    guildGroup = GameManager.Instance.GuildManager.GetGuildGroup(805);
+                    FenceWindow fenceWindow = new FenceWindow(DaggerfallUI.UIManager, npc, guildGroup);
+                    DaggerfallUI.UIManager.PushWindow(fenceWindow);
+                }
+
+            }
+        }
+
 
         private static void Halt()
         {
@@ -272,7 +309,7 @@ namespace ThiefOverhaul
 
         private static int CalculateBribeCost(int crimeLevel)
         {
-            int merchantile = playerEntity.Skills.GetLiveSkillValue(DFCareer.Skills.Mercantile) / 10;
+            int merchantile = Mathf.Max(playerEntity.Skills.GetLiveSkillValue(DFCareer.Skills.Mercantile) / 10, 1);
             int cost = Mathf.Max((110 * crimeLevel) / merchantile, 0);
 
             return cost;
@@ -328,7 +365,7 @@ namespace ThiefOverhaul
 
         static void ThiefEffects_OnNewMagicRound()
         {
-            Debug.Log("[ThiefOverhaul] Magic Round");
+            //Debug.Log("[ThiefOverhaul] Magic Round");
             if (playerEnterExit.IsPlayerInsideBuilding)
             {
                 PlayerGPS.DiscoveredBuilding buildingData = GameManager.Instance.PlayerEnterExit.BuildingDiscoveryData;

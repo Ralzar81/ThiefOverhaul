@@ -7,6 +7,9 @@
     "ModDescription": "Rebalances and improves mechanics for thief skills.",
     "GUID": "8263c411-5630-4f5c-a73e-4df5fa46cdbb",
     "Files": [
-        "Assets/Game/Mods/ThiefOverhaul/ThiefOverhaul.cs"
+        "Assets/Game/Mods/ThiefOverhaul/ThiefOverhaul.cs",
+        "Assets/Game/Mods/ThiefOverhaul/ThiefFenceWindow.cs",
+        "Assets/Game/Mods/ThiefOverhaul/Textures/ralzarfencegrey.png",
+        "Assets/Game/Mods/ThiefOverhaul/Textures/ralzarfencegold.png"
     ]
 }

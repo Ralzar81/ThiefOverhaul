@@ -160,14 +160,23 @@ namespace ThiefOverhaul
         }
 
         private void BuyButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
-        {
-            Debug.Log("Buy");
+        {            
             DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
-            CloseWindow();
-            DaggerfallTradeWindow tradeWindow;
-            tradeWindow = (DaggerfallTradeWindow)UIWindowFactory.GetInstanceWithArgs(UIWindowType.Trade, new object[] { uiManager, this, DaggerfallTradeWindow.WindowModes.Buy, guild });
-            tradeWindow.MerchantItems = GetThiefItems();
-            uiManager.PushWindow(tradeWindow);
+            if (!guild.CanAccessService(Services.GetService(npcService)))
+            {
+                DaggerfallMessageBox msgBox = new DaggerfallMessageBox(uiManager, this);
+                msgBox.SetTextTokens(DaggerfallUnity.Instance.TextProvider.GetRandomTokens(DaggerfallGuildServicePopupWindow.InsufficientRankId));
+                msgBox.ClickAnywhereToClose = true;
+                msgBox.Show();
+            }
+            else
+            {
+                CloseWindow();
+                DaggerfallTradeWindow tradeWindow;
+                tradeWindow = (DaggerfallTradeWindow)UIWindowFactory.GetInstanceWithArgs(UIWindowType.Trade, new object[] { uiManager, this, DaggerfallTradeWindow.WindowModes.Buy, guild });
+                tradeWindow.MerchantItems = GetThiefItems();
+                uiManager.PushWindow(tradeWindow);
+            }            
         }
 
         private void SellButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
@@ -202,18 +211,24 @@ namespace ThiefOverhaul
             PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
             ItemCollection items = new ItemCollection();
             //int numOfItems = (buildingDiscoveryData.quality / 2) + 1;
-            int numOfItems = (playerEntity.Stats.LiveLuck / 10) + UnityEngine.Random.Range(1, 5);
+            //int numOfItems = (playerEntity.Stats.LiveLuck / 10) + UnityEngine.Random.Range(1, 5);
 
-            int seed = (int)(DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime() / DaggerfallDateTime.MinutesPerDay);
-            UnityEngine.Random.InitState(seed);
+            //int seed = (int)(DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime() / DaggerfallDateTime.MinutesPerDay);
+            //UnityEngine.Random.InitState(seed);
 
-            for (int i = 0; i <= numOfItems; i++)
-            {
-                DaggerfallUnityItem thiefItem;
+            //for (int i = 0; i <= numOfItems; i++)
+            //{
+            //    DaggerfallUnityItem thiefItem;
 
-                thiefItem = ItemBuilder.CreateItem(ItemGroups.Jewellery, ThiefOverhaul.templateIndex_LockPicks);
-                items.AddItem(thiefItem);
-            }
+            //    thiefItem = ItemBuilder.CreateItem(ItemGroups.MiscItems, ThiefOverhaul.templateIndex_Ring);
+            //    items.AddItem(thiefItem);
+            //}
+            items.AddItem(ItemBuilder.CreateItem(ItemGroups.MiscItems, ThiefOverhaul.templateIndex_Ring));
+            items.AddItem(ItemBuilder.CreateItem(ItemGroups.MiscItems, ThiefOverhaul.templateIndex_Mark));
+            items.AddItem(ItemBuilder.CreateItem(ItemGroups.MiscItems, ThiefOverhaul.templateIndex_Bracelet));
+            items.AddItem(ItemBuilder.CreateItem(ItemGroups.MiscItems, ThiefOverhaul.templateIndex_Bracer));
+            items.AddItem(ItemBuilder.CreateItem(ItemGroups.MiscItems, ThiefOverhaul.templateIndex_Crystal));
+
             Debug.Log("GetThiefItems finished.");
             return items;
         }

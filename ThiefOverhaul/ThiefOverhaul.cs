@@ -66,11 +66,6 @@ namespace ThiefOverhaul
             PlayerActivate.RegisterCustomActivation(mod, 182, 35, ShadowAppraiserClicked);
             PlayerActivate.OnLootSpawned += TheftItems_OnLootSpawned;
 
-            //PlayerEnterExit.OnTransitionInterior += HouseItems_OnTransitionInterior;
-            //PlayerActivate.RegisterCustomActivation(mod, 205, 21, HouseLootClicked);
-
-            UIWindowFactory.RegisterCustomUIWindow(UIWindowType.Tavern, typeof(FenceWindow));
-
             ItemHelper itemHelper = DaggerfallUnity.Instance.ItemHelper;
 
             itemHelper.RegisterCustomItem(templateIndex_Ring, ItemGroups.MiscItems, typeof(ItemLockpicks));

@@ -1,9 +1,9 @@
 {
     "ModTitle": "Skulduggery - A Thief Overhaul",
-    "ModVersion": "1.0.1",
+    "ModVersion": "1.0.11",
     "ModAuthor": "Ralzar",
     "ContactInfo": "forums.dfworkshop.com",
-    "DFUnity_Version": "0.11.5",
+    "DFUnity_Version": "0.13.5",
     "ModDescription": "Rebalances and improves mechanics for thief skills.",
     "GUID": "8263c411-5630-4f5c-a73e-4df5fa46cdbb",
     "Files": [
@@ -11,12 +11,12 @@
         "Assets/Game/Mods/ThiefOverhaul/ThiefFenceWindow.cs",
         "Assets/Game/Mods/ThiefOverhaul/ThiefItems.cs",
         "Assets/Game/Mods/ThiefOverhaul/ItemTemplates.json",
-        "Assets/Game/Mods/ThiefOverhaul/Textures/ralzarfencegrey.png",
-        "Assets/Game/Mods/ThiefOverhaul/Textures/ralzarfencegold.png",
-        "Assets/Game/Mods/ThiefOverhaul/Textures/541_0-0.png",
-        "Assets/Game/Mods/ThiefOverhaul/Textures/545_0-0.png",
-        "Assets/Game/Mods/ThiefOverhaul/Textures/544_0-0.png",
+        "Assets/Game/Mods/ThiefOverhaul/Textures/BLANKMENU_4.png",
         "Assets/Game/Mods/ThiefOverhaul/Textures/543_0-0.png",
-        "Assets/Game/Mods/ThiefOverhaul/Textures/542_0-0.png"
+        "Assets/Game/Mods/ThiefOverhaul/Textures/544_0-0.png",
+        "Assets/Game/Mods/ThiefOverhaul/Textures/545_0-0.png",
+        "Assets/Game/Mods/ThiefOverhaul/Textures/546_0-0.png",
+        "Assets/Game/Mods/ThiefOverhaul/Textures/547_0-0.png",
+        "Assets/Game/Mods/ThiefOverhaul/ThiefOverhaul.dfmod.json"
     ]
 }

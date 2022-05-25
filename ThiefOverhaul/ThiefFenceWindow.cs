@@ -36,23 +36,27 @@ namespace ThiefOverhaul
         #region UI Controls
 
         Panel mainPanel = new Panel();
-        protected new Button joinButton;
-        protected new Button talkButton;
-        protected new Button buyButton;
+        protected Button joinButton;
+        protected Button talkButton;
+        protected Button buyButton;
         protected Button sellButton;
-        protected new Button exitButton;
+        protected Button exitButton;
+        protected TextLabel joinLabel = new TextLabel();
+        protected TextLabel talkLabel = new TextLabel();
+        protected TextLabel buyLabel = new TextLabel();
+        protected TextLabel sellLabel = new TextLabel();
 
         #endregion
 
         #region UI Textures
 
-        protected new Texture2D baseTexture;
+        protected Texture2D baseTexture;
 
         #endregion
 
         #region Fields
 
-        const string baseTextureName = "ralzarfencegrey";
+        const string baseTextureName = "BLANKMENU_4";
 
         protected IGuild guild;
         protected GuildManager guildManager;
@@ -61,16 +65,10 @@ namespace ThiefOverhaul
         protected GuildNpcServices npcService;
         protected int buildingFactionId;
 
-        //protected new StaticNPC merchantNPC;
-        //protected new PlayerGPS.DiscoveredBuilding buildingData;
-        //protected new RoomRental_v1 rentedRoom;
-        //protected new int daysToRent = 0;
-        //protected new int tradePrice = 0;
-
-        //bool isCloseWindowDeferred = false;
-        //bool isTalkWindowDeferred = false;
-        //bool isFoodDeferred = false;
-        //bool isDrinksDeferred = false;
+        bool isCloseWindowDeferred = false;
+        bool isTalkWindowDeferred = false;
+        bool isBuyDeferred = false;
+        bool isSellDeferred = false;
 
 
         #endregion
@@ -112,24 +110,45 @@ namespace ThiefOverhaul
             mainPanel.Size = new Vector2(130, 60);
 
             // join button
+            joinLabel.Position = new Vector2(0, 1);
+            joinLabel.TextColor = Color.gray;
+            joinLabel.ShadowPosition = Vector2.one;
+            joinLabel.HorizontalAlignment = HorizontalAlignment.Center;
+            joinLabel.Text = "JOIN GUILD";
             joinButton = DaggerfallUI.AddButton(joinButtonRect, mainPanel);
+            joinButton.Components.Add(joinLabel);
             joinButton.OnMouseClick += JoinButton_OnMouseClick;
             //roomButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.TavernRoom);
 
             // Talk button
+            talkLabel.Position = new Vector2(0, 10);
+            talkLabel.ShadowPosition = Vector2.one;
+            talkLabel.HorizontalAlignment = HorizontalAlignment.Center;
+            talkLabel.Text = "TALK";
             talkButton = DaggerfallUI.AddButton(talkButtonRect, mainPanel);
+            talkButton.Components.Add(talkLabel);
             talkButton.OnMouseClick += TalkButton_OnMouseClick;
             //talkButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.TavernTalk);
             //talkButton.OnKeyboardEvent += TalkButton_OnKeyboardEvent;
 
-            // Food button
+            // Buy Items button
+            buyLabel.Position = new Vector2(0, 10);
+            buyLabel.ShadowPosition = Vector2.one;
+            buyLabel.HorizontalAlignment = HorizontalAlignment.Center;
+            buyLabel.Text = "BUY ITEMS";
             buyButton = DaggerfallUI.AddButton(buyButtonRect, mainPanel);
+            buyButton.Components.Add(buyLabel);
             buyButton.OnMouseClick += BuyButton_OnMouseClick;
             //foodButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.TavernFood);
             //buyButton.OnKeyboardEvent += BuyButton_OnKeyboardEvent;
 
-            // Drinks button
+            // Sell Items button
+            sellLabel.Position = new Vector2(0, 10);
+            sellLabel.ShadowPosition = Vector2.one;
+            sellLabel.HorizontalAlignment = HorizontalAlignment.Center;
+            sellLabel.Text = "SELL ITEMS";
             sellButton = DaggerfallUI.AddButton(sellButtonRect, mainPanel);
+            sellButton.Components.Add(sellLabel);
             sellButton.OnMouseClick += SellButton_OnMouseClick;
             //drinksButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.TavernFood);
             //sellButton.OnKeyboardEvent += SellButton_OnKeyboardEvent;
@@ -155,7 +174,7 @@ namespace ThiefOverhaul
         private void TalkButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
-            //CloseWindow();
+            GameManager.Instance.TalkManager.TalkToStaticNPC(serviceNPC);
             Debug.Log("Talk");
         }
 
@@ -234,7 +253,6 @@ namespace ThiefOverhaul
         }
 
         #endregion
-
     }
 
 }

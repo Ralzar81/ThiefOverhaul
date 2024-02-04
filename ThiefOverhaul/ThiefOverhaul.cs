@@ -1,4 +1,5 @@
 using DaggerfallConnect;
+using Wenzil.Console;
 using DaggerfallWorkshop.Game;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.Items;
@@ -94,6 +95,7 @@ namespace ThiefOverhaul
 
             fenceWindow = new FenceWindow(DaggerfallUI.UIManager, npc, GameManager.Instance.GuildManager.GetGuildGroup(805));
 
+            RegisterRWCommands();
 
             Debug.Log("[ThiefOverhaul] Mod is ready.");
         }
@@ -411,18 +413,32 @@ namespace ThiefOverhaul
             if (playerEnterExit.IsPlayerInsideBuilding)
             {
                 PlayerGPS.DiscoveredBuilding buildingData = GameManager.Instance.PlayerEnterExit.BuildingDiscoveryData;
-
-                //// Get building directory for location
                 buildingDirectory = GameManager.Instance.StreamingWorld.GetCurrentBuildingDirectory();
-                //// Get detailed building data from directory
+                
+                bool isShop = RMBLayout.IsShop(buildingData.buildingType);                
+                int nowHour = DaggerfallUnity.Instance.WorldTime.Now.Hour;
+                int nowMinute = DaggerfallUnity.Instance.WorldTime.Now.Hour;
+                bool isBuildingOpen = IsBuildingOpen(buildingData.buildingType);
+
                 if (buildingDirectory.GetBuildingSummary(buildingData.buildingKey, out BuildingSummary buildingSummary))
                 {
                     if (GameManager.Instance.PlayerActivate.IsActiveQuestBuilding(buildingSummary, false))
                     {
                         Debug.Log("Active quest in this building");
                     }
-                    else if (RMBLayout.IsShop(buildingData.buildingType) && (!PlayerActivate.IsBuildingOpen(buildingData.buildingType) || playerEntity.CrimeCommitted == PlayerEntity.Crimes.Breaking_And_Entering))
+                    else if(isBuildingOpen && isShop && (PlayerActivate.closeHours[(int)buildingData.buildingType] == (nowHour + 1)) && nowMinute >= 58)
                     {
+                        if (DaggerfallUnity.Instance.WorldTime.Now.Minute >= 59)
+                        {
+                            DaggerfallUI.MessageBox("The shopkeeper escorts you out the door.");
+                            playerEnterExit.TransitionExterior(true);
+                        }
+                        else
+                            DaggerfallUI.MessageBox("'We are closing the shop in a few minutes.'");
+                    }
+                    else if (isShop && (!isBuildingOpen || playerEntity.CrimeCommitted == PlayerEntity.Crimes.Breaking_And_Entering))
+                    {
+                        Debug.Log("Shop Is Closed");
                         int stealthValue = playerEntity.Skills.GetLiveSkillValue(DFCareer.Skills.Stealth);
                         stealthValue -= buildingData.quality * 2;
                         int roll = UnityEngine.Random.Range(0, 101);
@@ -776,33 +792,33 @@ namespace ThiefOverhaul
 
         static void SneakIntoHouse(PlayerEnterExit.TransitionEventArgs args)
         {
-            buildingDirectory = GameManager.Instance.StreamingWorld.GetCurrentBuildingDirectory();
-            PlayerGPS.DiscoveredBuilding buildingData = GameManager.Instance.PlayerEnterExit.BuildingDiscoveryData;
-            bool buildingOpen = BuildingOpenCheck(buildingData.buildingType);
+                buildingDirectory = GameManager.Instance.StreamingWorld.GetCurrentBuildingDirectory();
+                PlayerGPS.DiscoveredBuilding buildingData = GameManager.Instance.PlayerEnterExit.BuildingDiscoveryData;
+                bool buildingOpen = BuildingOpenCheck(buildingData.buildingType);
 
-            if (GameManager.Instance.PlayerEnterExit.IsPlayerInsideBuilding && !buildingOpen)
-            {
-                if (buildingDirectory.GetBuildingSummary(buildingData.buildingKey, out BuildingSummary buildingSummary))
+                if (GameManager.Instance.PlayerEnterExit.IsPlayerInsideBuilding && !buildingOpen && buildingDirectory != null)
                 {
-                    if (GameManager.Instance.PlayerActivate.IsActiveQuestBuilding(buildingSummary, false))
+                    if (buildingDirectory.GetBuildingSummary(buildingData.buildingKey, out BuildingSummary buildingSummary))
                     {
-                        Debug.Log("Active quest in this building");
-                    }
-                    else
-                    {
-                        int stealthValue = playerEntity.Skills.GetLiveSkillValue(DFCareer.Skills.Stealth);
-                        stealthValue -= buildingData.quality * 2;
-                        int roll = UnityEngine.Random.Range(0, 101);
-
-                        if (roll > StealthCalc(stealthValue-10, false))
+                        if (GameManager.Instance.PlayerActivate.IsActiveQuestBuilding(buildingSummary, false))
                         {
-                            DaggerfallUI.MessageBox(BurglaryString1());
-                            burglaryCounter += Mathf.Clamp(UnityEngine.Random.Range(100, 200) - playerEntity.Stats.LiveLuck, 10, 100);
-                            playerEntity.TallySkill(DFCareer.Skills.Stealth, 1);
+                            Debug.Log("Active quest in this building");
+                        }
+                        else
+                        {
+                            int stealthValue = playerEntity.Skills.GetLiveSkillValue(DFCareer.Skills.Stealth);
+                            stealthValue -= buildingData.quality * 2;
+                            int roll = UnityEngine.Random.Range(0, 101);
+
+                            if (roll > StealthCalc(stealthValue - 10, false))
+                            {
+                                DaggerfallUI.MessageBox(BurglaryString1());
+                                burglaryCounter += Mathf.Clamp(UnityEngine.Random.Range(100, 200) - playerEntity.Stats.LiveLuck, 10, 100);
+                                playerEntity.TallySkill(DFCareer.Skills.Stealth, 1);
+                            }
                         }
                     }
                 }
-            }
         }
 
         static void SneakCounter_OnTransitionExterior(PlayerEnterExit.TransitionEventArgs args)
@@ -932,6 +948,14 @@ namespace ThiefOverhaul
             }
         }
 
+        static bool IsBuildingOpen(DFLocation.BuildingTypes buildingType)
+        {
+            if (RMBLayout.IsResidence(buildingType))
+                return DaggerfallUnity.Instance.WorldTime.Now.IsDay;
+            else
+                return PlayerActivate.IsBuildingOpen(buildingType);
+        }
+
         //static void HouseItems_OnTransitionInterior(PlayerEnterExit.TransitionEventArgs args)
         //{
         //    QuestMarker spawnMarker;
@@ -976,5 +1000,35 @@ namespace ThiefOverhaul
         //        DaggerfallUI.MessageBox("House Loot Pile");
         //    }
         //}
+
+        public static void RegisterRWCommands()
+        {
+            Debug.Log("[Skullduggery] Trying to register console commands.");
+            try
+            {
+                ConsoleCommandsDatabase.RegisterCommand(AddThiefItems.name, AddThiefItems.description, AddThiefItems.usage, AddThiefItems.Execute);
+            }
+            catch (Exception e)
+            {
+                Debug.LogError(string.Format("Error Registering RealisticWagon Console commands: {0}", e.Message));
+            }
+        }
+        private static class AddThiefItems
+        {
+            public static readonly string name = "add_thiefitems";
+            public static readonly string description = "Adds all thief items to player inventory";
+            public static readonly string usage = "add_thiefitems";
+
+            public static string Execute(params string[] args)
+            {
+                ItemCollection playerItems = GameManager.Instance.PlayerEntity.Items;
+                playerItems.AddItem(ItemBuilder.CreateItem(ItemGroups.MiscItems, ThiefOverhaul.templateIndex_Ring));
+                playerItems.AddItem(ItemBuilder.CreateItem(ItemGroups.MiscItems, ThiefOverhaul.templateIndex_Mark));
+                playerItems.AddItem(ItemBuilder.CreateItem(ItemGroups.MiscItems, ThiefOverhaul.templateIndex_Bracelet));
+                playerItems.AddItem(ItemBuilder.CreateItem(ItemGroups.MiscItems, ThiefOverhaul.templateIndex_Bracer));
+                playerItems.AddItem(ItemBuilder.CreateItem(ItemGroups.MiscItems, ThiefOverhaul.templateIndex_Crystal));
+                return "Thief items added to inventory";
+            }
+        }
     }
 }

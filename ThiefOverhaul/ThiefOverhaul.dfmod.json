@@ -1,9 +1,9 @@
 {
     "ModTitle": "Skulduggery - A Thief Overhaul",
-    "ModVersion": "1.0.11",
+    "ModVersion": "1.1.1",
     "ModAuthor": "Ralzar",
     "ContactInfo": "forums.dfworkshop.com",
-    "DFUnity_Version": "0.13.5",
+    "DFUnity_Version": "1.0.0",
     "ModDescription": "Rebalances and improves mechanics for thief skills.",
     "GUID": "8263c411-5630-4f5c-a73e-4df5fa46cdbb",
     "Files": [
